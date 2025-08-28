@@ -1,5 +1,5 @@
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
-}
+library easy_push_notification;
+
+export 'src/easy_push.dart';
+export 'src/models/easy_push_config.dart';
+export 'src/models/notification_payload.dart';
