@@ -37,7 +37,7 @@ class NotificationService {
     // Android channel creation (idempotent)
     await _plugin
         .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_channel);
   }
 
