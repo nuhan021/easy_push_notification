@@ -1,6 +1,6 @@
 name: easy_push_notification
 description: "A simple and efficient Flutter package to handle push notifications using Firebase Cloud Messaging (FCM) for both Android and iOS."
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/nuhan021/easy_push_notification
 
 environment:
