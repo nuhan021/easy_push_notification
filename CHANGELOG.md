@@ -5,4 +5,7 @@
 - Fix example issue.
 
 ## 0.0.3
+- Fix platform problem. Now only Android & IOS.
+
+## 0.0.4
 - Fix IOS issue.
