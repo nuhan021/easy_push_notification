@@ -24,7 +24,15 @@ class NotificationService {
     );
 
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(android: androidInit);
+    const iosInit = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    const initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
 
     await _plugin.initialize(
       initSettings,
@@ -48,17 +56,33 @@ class NotificationService {
     String? imageUrl,
   }) async {
     BigPictureStyleInformation? bigPicture;
+    DarwinNotificationDetails? iosDetails;
 
-    if (imageUrl != null && imageUrl.isNotEmpty && Platform.isAndroid) {
-      final path = await _downloadAndSaveFile(
-        imageUrl,
-        'big_${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
-      bigPicture = BigPictureStyleInformation(
-        FilePathAndroidBitmap(path),
-        contentTitle: title,
-        summaryText: body,
-      );
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      try {
+        final path = await _downloadAndSaveFile(
+          imageUrl,
+          'notification_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
+
+        if (Platform.isAndroid) {
+          bigPicture = BigPictureStyleInformation(
+            FilePathAndroidBitmap(path),
+            contentTitle: title,
+            summaryText: body,
+          );
+        } else if (Platform.isIOS) {
+          iosDetails = DarwinNotificationDetails(
+            presentAlert: true,
+            presentBadge: true,
+            presentSound: true,
+            attachments: [DarwinNotificationAttachment(path)],
+          );
+        }
+      } catch (e) {
+        // If image download fails, notification will show without image
+        print('Failed to download notification image: $e');
+      }
     }
 
     final android = AndroidNotificationDetails(
@@ -69,10 +93,16 @@ class NotificationService {
       styleInformation: bigPicture,
     );
 
-    final details = NotificationDetails(android: android);
+    final ios = iosDetails ?? const DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final details = NotificationDetails(android: android, iOS: ios);
 
     await _plugin.show(
-      0,
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
       title,
       body,
       details,
